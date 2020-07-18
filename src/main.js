@@ -12,16 +12,18 @@ function main(_config) {
 function addEditor(toContainer) {
   const textArea = document.createElement("textarea");
   const preArea = document.createElement("pre");
+  const codeArea = document.createElement("code");
 
-  configure(preArea);
-  syncAreas(textArea, preArea);
+  configure(preArea, codeArea);
+  syncAreas(textArea, codeArea);
 
+  preArea.appendChild(codeArea);
   toContainer.appendChild(textArea);
   toContainer.appendChild(preArea);
 }
 
-function configure(codePrinter) {
-  codePrinter.style.fontFamily = config.font;
+function configure(codePrinter, codeArea) {
+  codeArea.style.fontFamily = config.font;
   codePrinter.classList.add(config.className);
 }
 
