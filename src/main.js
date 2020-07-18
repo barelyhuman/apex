@@ -22,6 +22,7 @@ function addEditor(toContainer) {
 
 function configure(codePrinter) {
   codePrinter.style.fontFamily = config.font;
+  codePrinter.classList.add(config.className);
 }
 
 function syncAreas(codeEditor, codePrinter) {

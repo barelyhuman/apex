@@ -4,6 +4,8 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Apex | Example</title>
+    <link rel="stylesheet" href="./css/raster2.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
     <link
       rel="stylesheet"
       href="https://unpkg.com/prismjs@1.20.0/themes/prism-tomorrow.css"
@@ -14,8 +16,25 @@
     />
   </head>
   <body>
-    <div id="editor"></div>
-
+    <r-grid columns="3">
+      <r-cell span="row">
+        <h3 align="center">
+          Apex
+        </h3>
+        <p align="center">
+          <small>
+            Web Code Editor
+          </small>
+        </p>
+      </r-cell>
+      <r-cell span="row"></r-cell>
+      <r-cell span="row"></r-cell>
+      <r-cell></r-cell>
+      <r-cell>
+        <div id="editor"></div>
+      </r-cell>
+      <r-cell></r-cell>
+    </r-grid>
     <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.js"></script>
     <script src="https://unpkg.com/prismjs@1.20.0/components/prism-clike.js"></script>
     <script src="https://unpkg.com/prismjs@1.20.0/components/prism-javascript.js"></script>
