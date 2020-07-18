@@ -1,0 +1,26 @@
+{
+  "name": "@aliezsid/apex",
+  "version": "1.0.2",
+  "main": "dist/apex.umd.js",
+  "repository": "git@github.com:barelyhuman/apex.git",
+  "author": "sidgroks@gmail.com <sidgroks@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^11.0.1",
+    "@rollup/plugin-node-resolve": "^7.0.0",
+    "npm-run-all": "^4.1.5",
+    "rollup": "^1.29.0",
+    "serve": "^11.3.2"
+  },
+  "scripts": {
+    "build": "rollup -c",
+    "watch": "rollup -c -w",
+    "serve": "serve .",
+    "dev": "run-p 'watch' 'serve'",
+    "test": "node test/test.js",
+    "pretest": "npm run build"
+  },
+  "files": [
+    "dist"
+  ]
+}
