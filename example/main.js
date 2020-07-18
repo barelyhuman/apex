@@ -1,3 +1,5 @@
 (function () {
-  Apex(config);
+  Apex({
+    el: "#editor",
+  });
 })();
