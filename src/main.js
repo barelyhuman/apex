@@ -49,8 +49,6 @@ function configure(codeAreaContainer, codeArea) {
 }
 
 function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
-  //TODO: Add cursor to pre area
-
   const cursorNode = createCursorNode();
 
   codeEditor.addEventListener("keyup", (e) => {
@@ -67,9 +65,9 @@ function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
 
     caretPosition.x = codeEditor.selectionStart * fontWidth;
 
-    cursorNode.style.transform = `translate(${caretPosition.x + 0.5}px,${
-      caretPosition.y + 0.5
-    }px)`;
+    cursorNode.style.transform = `translate(${
+      caretPosition.x + (fontWidth / 2 + 0.5)
+    }px,${caretPosition.y + 1}px)`;
 
     codePrinter.innerHTML = _value;
   });
