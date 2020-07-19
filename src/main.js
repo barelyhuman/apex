@@ -3,6 +3,11 @@ let config = {
   font: "monospace",
 };
 
+let caretPosition = {
+  x: 0,
+  y: 0,
+};
+
 function main(_config) {
   config = Object.assign({}, config, _config);
   const container = document.querySelector(config.el);
@@ -19,7 +24,7 @@ function addEditor(toContainer) {
 
   configure(preArea, codeArea);
 
-  syncAreas(textArea, codeArea);
+  syncAreas(textArea, codeArea, preArea);
 
   preArea.appendChild(codeArea);
   toContainer.appendChild(textArea);
@@ -36,13 +41,17 @@ function visualiseTextArea(tarea) {
   tarea.style.width = "100%";
 }
 
-function configure(codePrinter, codeArea) {
+function configure(codeAreaContainer, codeArea) {
   codeArea.style.fontFamily = config.font;
-  codePrinter.classList.add(config.className);
+  codeAreaContainer.classList.add(config.className);
+  codeAreaContainer.style.position = "relative";
+  codeAreaContainer.style.minHeight = "42px";
 }
 
-function syncAreas(codeEditor, codePrinter) {
+function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
   //TODO: Add cursor to pre area
+
+  const cursorNode = createCursorNode();
 
   codeEditor.addEventListener("keyup", (e) => {
     let _value = e.target.value;
@@ -51,8 +60,46 @@ function syncAreas(codeEditor, codePrinter) {
       _value = config.highlight(_value);
     }
 
+    const { height: fontHeight, width: fontWidth } = getCaretPosition(
+      ")",
+      document.body
+    );
+
+    caretPosition.x = codeEditor.selectionStart * fontWidth;
+
+    cursorNode.style.transform = `translate(${caretPosition.x + 0.5}px,${
+      caretPosition.y + 0.5
+    }px)`;
+
     codePrinter.innerHTML = _value;
   });
+
+  codePrinterContainer.appendChild(cursorNode);
+}
+
+function createCursorNode() {
+  const node = document.createElement("div");
+  node.style.height = "16px";
+  node.style.width = "1px";
+  node.style.background = "#000";
+  node.style.position = "absolute";
+  return node;
+}
+
+function getCaretPosition(text, container) {
+  const fauxArea = document.createElement("div");
+  fauxArea.style.height = "auto";
+  fauxArea.style.width = "auto";
+  fauxArea.style.fontFamily = config.font;
+  fauxArea.style.whiteSpace = "nowrap";
+  fauxArea.style.position = "absolute";
+  // fauxArea.style.visibility = "hidden";
+  fauxArea.innerHTML = text;
+  container.appendChild(fauxArea);
+  const height = fauxArea.clientHeight;
+  const width = fauxArea.clientWidth;
+  fauxArea.parentNode.removeChild(fauxArea);
+  return { height, width };
 }
 
 export default main;
