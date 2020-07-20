@@ -3,7 +3,9 @@
     el: "#editor",
     font: "Hack,monospace",
     placeholder: "Enter Code here",
-    value: "function main()",
+    value: `function main(){
+      console.log("apex");
+}`,
     className: "custom-editor",
     onChange: (code) => {
       console.log(code);
