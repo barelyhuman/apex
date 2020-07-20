@@ -3,14 +3,10 @@ let config = {
   font: "monospace",
 };
 
-let caretPosition = {
-  x: 0,
-  y: 0,
-};
-
 function main(_config) {
   config = Object.assign({}, config, _config);
   const container = document.querySelector(config.el);
+  container.style.position = "relative";
   addEditor(container);
 }
 
@@ -27,11 +23,15 @@ function addEditor(toContainer) {
   syncAreas(textArea, codeArea, preArea);
 
   preArea.appendChild(codeArea);
+
   toContainer.appendChild(textArea);
   toContainer.appendChild(preArea);
 }
 
 function visualiseTextArea(tarea) {
+  tarea.placeholder = config.placeholder;
+  tarea.value = config.value;
+  tarea.style.position = "absolute";
   tarea.style.boxSizing = "border-box";
   tarea.style.resize = "none";
   tarea.style.border = "2px solid #000";
@@ -39,65 +39,52 @@ function visualiseTextArea(tarea) {
   tarea.style.outline = "#000";
   tarea.style.padding = "10px";
   tarea.style.width = "100%";
+  tarea.style.height = "100%";
+  tarea.style.left = "0";
+  tarea.style.top = "0";
+  tarea.style.zIndex = "1";
+  tarea.style.fontFamily = config.font;
+  tarea.style.background = "transparent";
 }
 
 function configure(codeAreaContainer, codeArea) {
   codeArea.style.fontFamily = config.font;
   codeAreaContainer.classList.add(config.className);
   codeAreaContainer.style.position = "relative";
-  codeAreaContainer.style.minHeight = "42px";
+  codeAreaContainer.style.height = "100%";
+  codeAreaContainer.style.width = "100%";
+  codeAreaContainer.style.left = "0";
+  codeAreaContainer.style.top = "0";
 }
 
 function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
-  const cursorNode = createCursorNode();
-
   codeEditor.addEventListener("keyup", (e) => {
-    let _value = e.target.value;
-
-    if (config.highlight && typeof config.highlight === "function") {
-      _value = config.highlight(_value);
+    if (!e.target.value) {
+      resetPlaceholderColor(e);
+    } else {
+      e.target.style.webkitTextFillColor = "transparent";
     }
 
-    const { height: fontHeight, width: fontWidth } = getCaretPosition(
-      ")",
-      document.body
-    );
+    highlightText(codeEditor, codePrinter);
 
-    caretPosition.x = codeEditor.selectionStart * fontWidth;
-
-    cursorNode.style.transform = `translate(${
-      caretPosition.x + (fontWidth / 2 + 0.5)
-    }px,${caretPosition.y + 1}px)`;
-
-    codePrinter.innerHTML = _value;
+    if (config.onChange) {
+      config.onChange(e.target.value);
+    }
   });
-
-  codePrinterContainer.appendChild(cursorNode);
+  highlightText(codeEditor, codePrinter);
 }
 
-function createCursorNode() {
-  const node = document.createElement("div");
-  node.style.height = "16px";
-  node.style.width = "1px";
-  node.style.background = "#000";
-  node.style.position = "absolute";
-  return node;
+function highlightText(editor, printArea) {
+  let _value = editor.value;
+  editor.style.webkitTextFillColor = "transparent";
+  if (config.highlight && typeof config.highlight === "function") {
+    _value = config.highlight(_value);
+  }
+  printArea.innerHTML = _value;
 }
 
-function getCaretPosition(text, container) {
-  const fauxArea = document.createElement("div");
-  fauxArea.style.height = "auto";
-  fauxArea.style.width = "auto";
-  fauxArea.style.fontFamily = config.font;
-  fauxArea.style.whiteSpace = "nowrap";
-  fauxArea.style.position = "absolute";
-  // fauxArea.style.visibility = "hidden";
-  fauxArea.innerHTML = text;
-  container.appendChild(fauxArea);
-  const height = fauxArea.clientHeight;
-  const width = fauxArea.clientWidth;
-  fauxArea.parentNode.removeChild(fauxArea);
-  return { height, width };
+function resetPlaceholderColor(eventObj) {
+  eventObj.target.style.webkitTextFillColor = "#000";
 }
 
 export default main;
