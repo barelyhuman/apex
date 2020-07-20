@@ -3,6 +3,10 @@ let config = {
   font: "monospace",
 };
 
+const keyCodes = {
+  TAB: 9,
+};
+
 function main(_config) {
   config = Object.assign({}, config, _config);
   const container = document.querySelector(config.el);
@@ -58,6 +62,12 @@ function configure(codeAreaContainer, codeArea) {
 }
 
 function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
+  codeEditor.addEventListener("keydown", (e) => {
+    if (e.keyCode === keyCodes.TAB) {
+      e.preventDefault();
+      return;
+    }
+  });
   codeEditor.addEventListener("keyup", (e) => {
     if (!e.target.value) {
       resetPlaceholderColor(e);
