@@ -63,7 +63,18 @@ function configure(codeAreaContainer, codeArea) {
 
 function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
   codeEditor.addEventListener("keydown", (e) => {
+    const selStart = e.target.selectionStart;
+
     if (e.keyCode === keyCodes.TAB) {
+      const tabChars = " ".repeat(2);
+      e.target.value =
+        e.target.value.substring(0, e.target.selectionStart) +
+        tabChars +
+        e.target.value.substring(e.target.selectionEnd);
+
+      e.target.selectionStart = selStart + tabChars.length;
+      e.target.selectionEnd = selStart + tabChars.length;
+
       e.preventDefault();
       return;
     }
