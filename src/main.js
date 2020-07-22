@@ -70,7 +70,7 @@ function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
     const selStart = e.target.selectionStart;
 
     if (e.keyCode === keyCodes.TAB) {
-      const tabChars = " ".repeat(tabSpace);
+      const tabChars = " ".repeat(config.tabSpace);
       e.target.value =
         e.target.value.substring(0, e.target.selectionStart) +
         tabChars +
