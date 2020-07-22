@@ -7,6 +7,8 @@ const keyCodes = {
   TAB: 9,
 };
 
+let highlighter;
+
 function main(_config) {
   config = Object.assign({}, config, _config);
   const container = document.querySelector(config.el);
@@ -97,11 +99,20 @@ function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
 
 function highlightText(editor, printArea) {
   let _value = editor.value;
-  editor.style.webkitTextFillColor = "transparent";
-  if (config.highlight && typeof config.highlight === "function") {
-    _value = config.highlight(_value);
-  }
   printArea.innerHTML = _value;
+
+  if (highlighter) {
+    clearTimeout(highlighter);
+  }
+
+  highlighter = setTimeout(() => {
+    if (config.highlight && typeof config.highlight === "function") {
+      _value = config.highlight(_value);
+    }
+    printArea.innerHTML = _value;
+  }, 0);
+
+  editor.style.webkitTextFillColor = "transparent";
 }
 
 function resetPlaceholderColor(eventObj) {
