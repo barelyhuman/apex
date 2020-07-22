@@ -1,6 +1,8 @@
 let config = {
   highlight: false,
   font: "monospace",
+  fontSize: 24,
+  tabSpace: 2,
 };
 
 const keyCodes = {
@@ -40,22 +42,22 @@ function visualiseTextArea(tarea) {
   tarea.style.position = "absolute";
   tarea.style.boxSizing = "border-box";
   tarea.style.resize = "none";
-  tarea.style.border = "2px solid #000";
-  tarea.style.borderRadius = "4px";
-  tarea.style.outline = "#000";
-  tarea.style.padding = "10px";
   tarea.style.width = "100%";
   tarea.style.height = "100%";
   tarea.style.left = "0";
   tarea.style.top = "0";
+  tarea.classList.add(config.className);
   tarea.style.zIndex = "1";
   tarea.style.fontFamily = config.font;
+  tarea.style.fontSize = config.fontSize + "px";
+  tarea.style.lineHeight = config.fontSize * 1.25 + "px";
   tarea.style.background = "transparent";
 }
 
 function configure(codeAreaContainer, codeArea) {
   codeArea.style.fontFamily = config.font;
-  codeAreaContainer.classList.add(config.className);
+  codeArea.style.fontSize = config.fontSize + "px";
+  codeArea.style.lineHeight = config.fontSize * 1.25 + "px";
   codeAreaContainer.style.position = "relative";
   codeAreaContainer.style.height = "100%";
   codeAreaContainer.style.width = "100%";
@@ -68,7 +70,7 @@ function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
     const selStart = e.target.selectionStart;
 
     if (e.keyCode === keyCodes.TAB) {
-      const tabChars = " ".repeat(2);
+      const tabChars = " ".repeat(tabSpace);
       e.target.value =
         e.target.value.substring(0, e.target.selectionStart) +
         tabChars +

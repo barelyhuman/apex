@@ -16,8 +16,30 @@
     />
 
     <style>
+      .custom-editor {
+        background: transparent;
+        border: 0px;
+        border: 2px solid black;
+        border-radius: 4px;
+        outline: none;
+      }
+
       #editor {
-        height: 250px;
+        padding: 10px;
+      }
+
+      input {
+        background: white;
+        color: black;
+        border: 2px solid rgba(12, 12, 13, 0.1);
+        border-radius: 4px;
+        height: 32px;
+        padding: 0px 6px;
+      }
+
+      input:focus {
+        border-color: black;
+        outline: black;
       }
     </style>
   </head>
@@ -32,10 +54,24 @@
             Web Code Editor
           </small>
         </p>
+        <p align="center">
+          <a href="https://github.com/barelyhuman/apex#readme">Documentation</a>
+        </p>
       </r-cell>
       <r-cell span="row"></r-cell>
       <r-cell span="row"></r-cell>
-      <r-cell></r-cell>
+      <r-cell>
+        <label for="">
+          Font Size<br />
+          <input id="font-size-input" type="text" value="16" />
+        </label>
+        <br />
+        <br />
+        <label for="">
+          Language (go,js)<br />
+          <input type="text" id="language-input" type="text" value="js" />
+        </label>
+      </r-cell>
       <r-cell>
         <div id="editor"></div>
       </r-cell>
@@ -44,6 +80,8 @@
     <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.js"></script>
     <script src="https://unpkg.com/prismjs@1.20.0/components/prism-clike.js"></script>
     <script src="https://unpkg.com/prismjs@1.20.0/components/prism-javascript.js"></script>
+    <script src="https://unpkg.com/prismjs@1.20.0/components/prism-go.js"></script>
+
     <script src="./dist/apex.umd.js"></script>
     <script src="./browser_main.js"></script>
   </body>
