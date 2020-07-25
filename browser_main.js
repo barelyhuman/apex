@@ -19,6 +19,7 @@
       font: "Hack,monospace",
       fontSize: fontSizeInput.value || 14,
       placeholder: "Enter Code here",
+      disabled: false,
       value: `function main(){
         console.log("apex");
   }`,

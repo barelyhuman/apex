@@ -3,6 +3,7 @@ let config = {
   font: "monospace",
   fontSize: 24,
   tabSpace: 2,
+  disabled: false,
 };
 
 const keyCodes = {
@@ -52,6 +53,7 @@ function visualiseTextArea(tarea) {
   tarea.style.fontSize = config.fontSize + "px";
   tarea.style.lineHeight = config.fontSize * 1.25 + "px";
   tarea.style.background = "transparent";
+  tarea.disabled = config.disabled;
 }
 
 function configure(codeAreaContainer, codeArea) {
