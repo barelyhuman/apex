@@ -15,7 +15,7 @@
     editor.innerHTML = "";
 
     Apex({
-      el: "#editor",
+      el: document.getElementById("editor"),
       font: "Hack,monospace",
       fontSize: fontSizeInput.value || 14,
       placeholder: "Enter Code here",

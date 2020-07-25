@@ -24,7 +24,7 @@ The API is very simple and small as the editor doesn't really try to solve a lot
 
 ```js
 Apex({
-  el: "#editor", //elementId to attach too
+  el: document.getElementById("editor"), //element to attach too
   tabSpace: 2, // number of spaces to be added on TAB
   font: "Hack,monospace", // font to be used
   fontSize: "14", //font size for the editor

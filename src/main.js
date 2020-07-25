@@ -14,7 +14,7 @@ let highlighter;
 
 function main(_config) {
   config = Object.assign({}, config, _config);
-  const container = document.querySelector(config.el);
+  const container = config.el;
   container.style.position = "relative";
   addEditor(container);
 }
