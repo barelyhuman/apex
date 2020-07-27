@@ -105,16 +105,11 @@ function highlightText(editor, printArea) {
   let _value = editor.value;
   printArea.innerHTML = _value;
 
-  if (highlighter) {
-    clearTimeout(highlighter);
+  if (config.highlight && typeof config.highlight === "function") {
+    printArea.innerHTML = config.highlight(_value);
+  } else {
+    printArea.innerText = _value;
   }
-
-  highlighter = setTimeout(() => {
-    if (config.highlight && typeof config.highlight === "function") {
-      _value = config.highlight(_value);
-    }
-    printArea.innerHTML = _value;
-  }, 0);
 
   editor.style.webkitTextFillColor = "transparent";
 }
