@@ -16,6 +16,7 @@ function main(_config) {
   config = Object.assign({}, config, _config);
   const container = config.el;
   container.style.position = "relative";
+  container.style.minHeight = "100%";
   addEditor(container);
 }
 
@@ -53,6 +54,7 @@ function visualiseTextArea(tarea) {
   tarea.style.fontSize = config.fontSize + "px";
   tarea.style.lineHeight = config.fontSize * 1.25 + "px";
   tarea.style.background = "transparent";
+  tarea.style.transition = "all 0.2s ease;";
   tarea.disabled = config.disabled;
 }
 
@@ -65,6 +67,7 @@ function configure(codeAreaContainer, codeArea) {
   codeAreaContainer.style.width = "100%";
   codeAreaContainer.style.left = "0";
   codeAreaContainer.style.top = "0";
+  codeAreaContainer.style.transition = "all 0.2s ease;";
 }
 
 function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
@@ -106,7 +109,13 @@ function highlightText(editor, printArea) {
   printArea.innerHTML = _value;
 
   if (config.highlight && typeof config.highlight === "function") {
-    printArea.innerHTML = config.highlight(_value);
+    useHighlighter(_value)
+      .then((data) => {
+        printArea.innerHTML = data;
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   } else {
     printArea.innerText = _value;
   }
@@ -116,6 +125,10 @@ function highlightText(editor, printArea) {
 
 function resetPlaceholderColor(eventObj) {
   eventObj.target.style.webkitTextFillColor = "#000";
+}
+
+async function useHighlighter(value) {
+  return config.highlight(value);
 }
 
 export default main;
