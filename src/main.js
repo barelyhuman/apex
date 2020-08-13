@@ -92,11 +92,12 @@ function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
       e.target.style.webkitTextFillColor = "transparent";
     }
 
+    highlightText(codeEditor, codePrinter);
+
     if (config.onChange) {
       config.onChange(e.target.value);
     }
   });
-
   highlightText(codeEditor, codePrinter);
 }
 
