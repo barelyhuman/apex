@@ -1,15 +1,15 @@
-import resolve from "@rollup/plugin-node-resolve";
-import commonjs from "@rollup/plugin-commonjs";
-import pkg from "./package.json";
+import resolve from '@rollup/plugin-node-resolve'
+import commonjs from '@rollup/plugin-commonjs'
+import pkg from './package.json'
 
 export default [
   {
-    input: "src/main.js",
+    input: 'src/main.js',
     output: {
-      name: "Apex",
+      name: 'Apex',
       file: pkg.main,
-      format: "umd",
+      format: 'umd'
     },
-    plugins: [resolve(), commonjs()],
-  },
-];
+    plugins: [resolve(), commonjs()]
+  }
+]
