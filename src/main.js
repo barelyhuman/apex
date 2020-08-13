@@ -10,29 +10,36 @@ const keyCodes = {
   TAB: 9,
 };
 
-let highlighter;
+let highlighter = false;
 
 function main(_config) {
   config = Object.assign({}, config, _config);
   const container = config.el;
-  container.style.position = "relative";
-  container.style.minHeight = "100%";
+  container.classList.add(config.className);
+  container.style = `
+    position: relative;
+    text-align: left;
+    box-sizing: border-box;
+    padding: 0px;
+    overflow: hidden;
+    font-family:${config.font};
+    font-size:${config.fontSize + "px"};
+    line-height:calc(${config.fontSize}px * 1.5);
+  `;
+
   addEditor(container);
 }
 
 function addEditor(toContainer) {
   const textArea = document.createElement("textarea");
   const preArea = document.createElement("pre");
-  const codeArea = document.createElement("code");
 
   // TODO: hide text area;
   visualiseTextArea(textArea);
 
-  configure(preArea, codeArea);
+  configure(preArea);
 
-  syncAreas(textArea, codeArea, preArea);
-
-  preArea.appendChild(codeArea);
+  syncAreas(textArea, preArea);
 
   toContainer.appendChild(textArea);
   toContainer.appendChild(preArea);
@@ -41,36 +48,81 @@ function addEditor(toContainer) {
 function visualiseTextArea(tarea) {
   tarea.placeholder = config.placeholder;
   tarea.value = config.value;
-  tarea.style.position = "absolute";
-  tarea.style.boxSizing = "border-box";
-  tarea.style.resize = "none";
-  tarea.style.width = "100%";
-  tarea.style.height = "100%";
-  tarea.style.left = "0";
-  tarea.style.top = "0";
-  tarea.classList.add(config.className);
-  tarea.style.zIndex = "1";
-  tarea.style.fontFamily = config.font;
-  tarea.style.fontSize = config.fontSize + "px";
-  tarea.style.lineHeight = config.fontSize * 1.25 + "px";
-  tarea.style.background = "transparent";
-  tarea.style.transition = "all 0.2s ease;";
+  tarea.autoCapitalize = "off";
+  tarea.autoComplete = "off";
+  tarea.autoCorrect = "off";
+  tarea.spellCheck = false;
+  tarea.style = `
+      margin: 0px;
+      border: 0px;
+      background: none;
+      box-sizing: inherit;
+      display: inherit;
+      font-family: inherit;
+      font-size: inherit;
+      font-style: inherit;
+      font-variant-ligatures: inherit;
+      font-weight: inherit;
+      letter-spacing: inherit;
+      line-height: inherit;
+      tab-size: inherit;
+      text-indent: inherit;
+      text-rendering: inherit;
+      text-transform: inherit;
+      white-space: pre-wrap;
+      word-break: keep-all;
+      overflow-wrap: break-word;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      height: 100%;
+      width: 100%;
+      resize: none;
+      color: inherit;
+      overflow: hidden;
+      -webkit-font-smoothing: antialiased;
+      -webkit-text-fill-color: transparent;
+      padding: 10px;
+  `;
+
   tarea.disabled = config.disabled;
 }
 
-function configure(codeAreaContainer, codeArea) {
-  codeArea.style.fontFamily = config.font;
-  codeArea.style.fontSize = config.fontSize + "px";
-  codeArea.style.lineHeight = config.fontSize * 1.25 + "px";
-  codeAreaContainer.style.position = "relative";
-  codeAreaContainer.style.height = "100%";
-  codeAreaContainer.style.width = "100%";
-  codeAreaContainer.style.left = "0";
-  codeAreaContainer.style.top = "0";
-  codeAreaContainer.style.transition = "all 0.2s ease;";
+function configure(codeAreaContainer) {
+  codeAreaContainer.setAttribute("aria-hidden", true);
+  codeAreaContainer.style = `
+    margin: 0px;
+    border: 0px;
+    background: none;
+    box-sizing: inherit;
+    display: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    font-style: inherit;
+    font-variant-ligatures: inherit;
+    font-weight: inherit;
+    letter-spacing: inherit;
+    line-height: inherit;
+    tab-size: inherit;
+    text-indent: inherit;
+    text-rendering: inherit;
+    text-transform: inherit;
+    white-space: pre-wrap;
+    word-break: keep-all;
+    overflow-wrap: break-word;
+    position: relative;
+    pointer-events: none;
+    padding: 10px;
+    overflow-x: auto;
+  `;
 }
 
-function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
+function syncAreas(codeEditor, codePrinterContainer) {
+  if (config.highlight && typeof config.highlight === "function") {
+    highlighter = true;
+    codeEditor.style.webkitTextFillColor = "transparent";
+  }
+
   codeEditor.addEventListener("keydown", (e) => {
     const selStart = e.target.selectionStart;
 
@@ -88,43 +140,35 @@ function syncAreas(codeEditor, codePrinter, codePrinterContainer) {
       return;
     }
   });
-  codeEditor.addEventListener("keyup", (e) => {
-    if (!e.target.value) {
-      resetPlaceholderColor(e);
-    } else {
-      e.target.style.webkitTextFillColor = "transparent";
-    }
 
-    highlightText(codeEditor, codePrinter);
+  codeEditor.addEventListener("keyup", (e) => {
+    if (highlighter) {
+      highlightText(codeEditor, codePrinterContainer);
+    } else {
+      printArea.innerText = _value;
+    }
 
     if (config.onChange) {
       config.onChange(e.target.value);
     }
   });
-  highlightText(codeEditor, codePrinter);
+
+  if (highlighter) {
+    highlightText(codeEditor, codePrinterContainer);
+  }
 }
 
 function highlightText(editor, printArea) {
   let _value = editor.value;
-  printArea.innerHTML = _value;
+  editor.innerHTML = _value;
 
-  if (config.highlight && typeof config.highlight === "function") {
-    useHighlighter(_value)
-      .then((data) => {
-        printArea.innerHTML = data;
-      })
-      .catch((err) => {
-        console.log(err);
-      });
-  } else {
-    printArea.innerText = _value;
-  }
-
-  editor.style.webkitTextFillColor = "transparent";
-}
-
-function resetPlaceholderColor(eventObj) {
-  eventObj.target.style.webkitTextFillColor = "#000";
+  useHighlighter(_value)
+    .then((data) => {
+      printArea.innerHTML = data;
+    })
+    .catch((err) => {
+      console.log(err);
+    });
 }
 
 async function useHighlighter(value) {
