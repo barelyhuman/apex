@@ -1,40 +1,42 @@
 (function () {
-  const fontSizeInput = document.getElementById('font-size-input')
-  const languageInput = document.getElementById('language-input')
+  const fontSizeInput = document.getElementById("font-size-input");
+  const languageInput = document.getElementById("language-input");
 
-  fontSizeInput.addEventListener('change', () => {
-    refreshEditor()
-  })
+  fontSizeInput.addEventListener("change", () => {
+    refreshEditor();
+  });
 
-  languageInput.addEventListener('change', () => {
-    refreshEditor()
-  })
+  languageInput.addEventListener("change", () => {
+    refreshEditor();
+  });
 
-  function refreshEditor () {
-    const editor = document.getElementById('editor')
-    editor.innerHTML = ''
+  function refreshEditor() {
+    const editor = document.getElementById("editor");
+    editor.innerHTML = "";
 
-    Apex({
-      el: document.getElementById('editor'),
-      font: 'Hack,monospace',
+    const apex = new Apex();
+    apex.install({
+      el: document.getElementById("editor"),
+      font: "Hack,monospace",
       fontSize: fontSizeInput.value || 14,
-      placeholder: 'Enter Code here',
+      placeholder: "Enter Code here",
       disabled: false,
       value: `function main(){
         console.log("apex");
   }`,
-      className: 'custom-editor',
+      className: "custom-editor",
       onChange: (code) => {
         // console.log(code);
       },
       highlight: (code) =>
         Prism.highlight(
           code,
-          Prism.languages[languageInput.value || 'js'],
-          'javascript'
-        )
-    })
+          Prism.languages[languageInput.value || "js"],
+          "javascript"
+        ),
+    });
+    apex.start();
   }
 
-  refreshEditor()
-})()
+  refreshEditor();
+})();
