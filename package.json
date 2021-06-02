@@ -40,9 +40,11 @@
     ]
   },
   "lint-staged": {
-    "*.{js,css,md}": [
-      "standard --fix",
-      "prettier --write"
+    "*.{js,css}": [
+      "standard --fix"
+    ],
+    "*.md": [
+      "prettier --write "
     ]
   }
 }

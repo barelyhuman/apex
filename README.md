@@ -10,7 +10,7 @@ Apex
 ### Installation
 
 ```sh
-npm i --save @im__reaper/apex
+npm i --save @barelyreaper/apex
 ```
 
 ### Features
