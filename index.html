@@ -6,14 +6,18 @@
     <title>Apex | Example</title>
     <link rel="stylesheet" href="./css/raster2.css" />
     <link rel="stylesheet" href="./css/styles.css" />
-    <link
-      rel="stylesheet"
-      href="https://unpkg.com/prismjs@1.20.0/themes/prism-tomorrow.css"
-    />
+
+    <!-- Font -->
     <link
       rel="stylesheet"
       href="//cdn.jsdelivr.net/npm/hack-font@3/build/web/hack.css"
     />
+
+    <!-- Hightlightjs -->
+      <link rel="stylesheet"
+      href="//unpkg.com/@highlightjs/cdn-assets@11.0.0/styles/mono-blue.min.css">
+
+<script src="//unpkg.com/@highlightjs/cdn-assets@11.0.0/highlight.min.js"></script>
 
     <style>
       .custom-editor {
@@ -67,12 +71,6 @@
         </label>
         <br />
         <br />
-        <label for="">
-          Language (go,js)<br />
-          <input type="text" id="language-input" type="text" value="js" />
-        </label>
-        <br />
-        <br />
         <label for="" class="flex align-center">
           <input type="checkbox" id="hightlight-checkbox" checked="true" />
           <span>
@@ -84,12 +82,7 @@
         <div id="editor"></div>
       </r-cell>
       <r-cell></r-cell>
-    </r-grid>
-    <script src="https://unpkg.com/prismjs@1.20.0/components/prism-core.js"></script>
-    <script src="https://unpkg.com/prismjs@1.20.0/components/prism-clike.js"></script>
-    <script src="https://unpkg.com/prismjs@1.20.0/components/prism-javascript.js"></script>
-    <script src="https://unpkg.com/prismjs@1.20.0/components/prism-go.js"></script>
-
+    </r-grid> 
     <script src="./dist/apex.umd.js"></script>
     <script src="./browser_main.js"></script>
   </body>

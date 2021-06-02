@@ -8,12 +8,13 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^11.0.1",
     "@rollup/plugin-node-resolve": "^7.0.0",
-    "husky": "^4.2.5",
+    "husky": ">=6",
     "lint-staged": ">=10",
     "npm-run-all": "^4.1.5",
     "prettier": "^2.0.5",
     "rollup": "^1.29.0",
-    "serve": "^11.3.2"
+    "serve": "^11.3.2",
+    "standard": "^16.0.3"
   },
   "scripts": {
     "build": "rollup -c",
@@ -22,7 +23,8 @@
     "dev": "run-p 'watch' 'serve'",
     "test": "node test/test.js",
     "pretest": "npm run build",
-    "fix": "npx standard --fix"
+    "fix": "npx standard --fix",
+    "prepare": "husky install"
   },
   "files": [
     "dist"
@@ -34,15 +36,13 @@
     ],
     "globals": [
       "Apex",
-      "Prism"
+      "hljs"
     ]
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.{js,css,md}": "standard --fix"
+    "*.{js,css,md}": [
+      "standard --fix",
+      "prettier --write"
+    ]
   }
 }
