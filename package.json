@@ -36,7 +36,8 @@
     ],
     "globals": [
       "Apex",
-      "hljs"
+      "hljs",
+      "InputEvent"
     ]
   },
   "lint-staged": {
