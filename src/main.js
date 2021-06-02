@@ -1,21 +1,34 @@
 let config = {
   highlight: false,
-  font: 'monospace',
+  font: "monospace",
   fontSize: 24,
   tabSpace: 2,
-  disabled: false
-}
+  disabled: false,
+};
 
 const keyCodes = {
-  TAB: 9
-}
+  TAB: 9,
+  CURSOR_LEFT: 37,
+  CURSOR_RIGHT: 39,
+  CURSOR_UP: 38,
+  CURSOR_DOWN: 40,
+  SPACE: 32,
+};
 
-let highlighter = false
+const NONREACTIVE_KEYS = [
+  keyCodes.CURSOR_LEFT,
+  keyCodes.CURSOR_RIGHT,
+  keyCodes.CURSOR_UP,
+  keyCodes.CURSOR_DOWN,
+  keyCodes.SPACE,
+];
 
-function main (_config) {
-  config = Object.assign({}, config, _config)
-  const container = config.el
-  container.classList.add(config.className)
+let highlighter = false;
+
+function main(_config) {
+  config = Object.assign({}, config, _config);
+  const container = config.el;
+  container.classList.add(config.className);
   container.style = `
     position: relative;
     text-align: left;
@@ -23,35 +36,35 @@ function main (_config) {
     padding: 0px;
     overflow: hidden;
     font-family:${config.font};
-    font-size:${config.fontSize + 'px'};
+    font-size:${config.fontSize + "px"};
     line-height:calc(${config.fontSize}px * 1.5);
-  `
+  `;
 
-  addEditor(container)
+  addEditor(container);
 }
 
-function addEditor (toContainer) {
-  const textArea = document.createElement('textarea')
-  const preArea = document.createElement('pre')
+function addEditor(toContainer) {
+  const textArea = document.createElement("textarea");
+  const preArea = document.createElement("pre");
 
   // TODO: hide text area;
-  visualiseTextArea(textArea)
+  visualiseTextArea(textArea);
 
-  configure(preArea)
+  configure(preArea);
 
-  syncAreas(textArea, preArea)
+  syncAreas(textArea, preArea);
 
-  toContainer.appendChild(textArea)
-  toContainer.appendChild(preArea)
+  toContainer.appendChild(textArea);
+  toContainer.appendChild(preArea);
 }
 
-function visualiseTextArea (tarea) {
-  tarea.placeholder = config.placeholder
-  tarea.value = config.value
-  tarea.autoCapitalize = 'off'
-  tarea.autoComplete = 'off'
-  tarea.autoCorrect = 'off'
-  tarea.spellCheck = false
+function visualiseTextArea(tarea) {
+  tarea.placeholder = config.placeholder;
+  tarea.value = config.value;
+  tarea.autoCapitalize = "off";
+  tarea.autoComplete = "off";
+  tarea.autoCorrect = "off";
+  tarea.spellCheck = false;
   tarea.style = `
       margin: 0px;
       border: 0px;
@@ -83,13 +96,13 @@ function visualiseTextArea (tarea) {
       -webkit-font-smoothing: antialiased;
       -webkit-text-fill-color: transparent;
       padding: 10px;
-  `
+  `;
 
-  tarea.disabled = config.disabled
+  tarea.disabled = config.disabled;
 }
 
-function configure (codeAreaContainer) {
-  codeAreaContainer.setAttribute('aria-hidden', true)
+function configure(codeAreaContainer) {
+  codeAreaContainer.setAttribute("aria-hidden", true);
   codeAreaContainer.style = `
     margin: 0px;
     border: 0px;
@@ -114,64 +127,68 @@ function configure (codeAreaContainer) {
     pointer-events: none;
     padding: 10px;
     overflow-x: auto;
-  `
+  `;
 }
 
-function syncAreas (codeEditor, codePrinterContainer) {
-  if (config.highlight && typeof config.highlight === 'function') {
-    highlighter = true
-    codeEditor.style.webkitTextFillColor = 'transparent'
+function syncAreas(codeEditor, codePrinterContainer) {
+  if (config.highlight && typeof config.highlight === "function") {
+    highlighter = true;
+    codeEditor.style.webkitTextFillColor = "transparent";
   }
 
-  codeEditor.addEventListener('keydown', (e) => {
-    const selStart = e.target.selectionStart
+  codeEditor.addEventListener("keydown", (e) => {
+    const selStart = e.target.selectionStart;
+
+    if (NONREACTIVE_KEYS.indexOf(e.keyCode) > -1) {
+      return;
+    }
 
     if (e.keyCode === keyCodes.TAB) {
-      const tabChars = ' '.repeat(config.tabSpace)
+      const tabChars = " ".repeat(config.tabSpace);
       e.target.value =
         e.target.value.substring(0, e.target.selectionStart) +
         tabChars +
-        e.target.value.substring(e.target.selectionEnd)
+        e.target.value.substring(e.target.selectionEnd);
 
-      e.target.selectionStart = selStart + tabChars.length
-      e.target.selectionEnd = selStart + tabChars.length
+      e.target.selectionStart = selStart + tabChars.length;
+      e.target.selectionEnd = selStart + tabChars.length;
 
-      e.preventDefault()
+      e.preventDefault();
     }
-  })
+  });
 
-  codeEditor.addEventListener('keyup', (e) => {
+  codeEditor.addEventListener("keyup", (e) => {
     if (highlighter) {
-      highlightText(codeEditor, codePrinterContainer)
+      highlightText(codeEditor, codePrinterContainer);
     } else {
-      printArea.innerText = _value
+      codePrinterContainer.innerText = codeEditor.value;
     }
 
     if (config.onChange) {
-      config.onChange(e.target.value)
+      config.onChange(e.target.value);
     }
-  })
+  });
 
   if (highlighter) {
-    highlightText(codeEditor, codePrinterContainer)
+    highlightText(codeEditor, codePrinterContainer);
   }
 }
 
-function highlightText (editor, printArea) {
-  const _value = editor.value
-  editor.innerHTML = _value
+function highlightText(editor, printArea) {
+  const _value = editor.value;
+  editor.innerHTML = _value;
 
   useHighlighter(_value)
     .then((data) => {
-      printArea.innerHTML = data
+      printArea.innerHTML = data;
     })
     .catch((err) => {
-      console.log(err)
-    })
+      console.log(err);
+    });
 }
 
-async function useHighlighter (value) {
-  return config.highlight(value)
+async function useHighlighter(value) {
+  return config.highlight(value);
 }
 
-export default main
+export default main;
