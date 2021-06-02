@@ -1,6 +1,6 @@
 {
   "name": "@barelyreaper/apex",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/apex.umd.js",
   "repository": "git@github.com:barelyhuman/apex.git",
   "author": "sidgroks@gmail.com <sidgroks@gmail.com>",
