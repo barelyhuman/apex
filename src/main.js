@@ -26,7 +26,7 @@ const NONREACTIVE_KEYS = [
 
 let highlighter = false
 
-function main (_config) {
+function Apex (_config) {
   config = Object.assign({}, config, _config)
   const container = config.el
   container.classList.add(config.className)
@@ -211,4 +211,4 @@ async function useHighlighter (value) {
   return config.highlight(value)
 }
 
-export default main
+export default Apex
