@@ -6,3 +6,11 @@
   outline: none;
   min-height: 250px;
 }
+
+.flex {
+  display: flex;
+}
+
+.align-center {
+  align-items: center;
+}

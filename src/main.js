@@ -1,5 +1,5 @@
 let config = {
-  highlight: false,
+  highlight: (code) => code,
   font: "monospace",
   fontSize: 24,
   tabSpace: 2,
@@ -134,16 +134,16 @@ function syncAreas(codeEditor, codePrinterContainer) {
   if (config.highlight && typeof config.highlight === "function") {
     highlighter = true;
     codeEditor.style.webkitTextFillColor = "transparent";
+  } else {
+    highlighter = false;
   }
 
   codeEditor.addEventListener("keydown", (e) => {
     const selStart = e.target.selectionStart;
 
-    if (NONREACTIVE_KEYS.indexOf(e.keyCode) > -1) {
-      return;
-    }
-
     if (e.keyCode === keyCodes.TAB) {
+      e.preventDefault();
+
       const tabChars = " ".repeat(config.tabSpace);
       e.target.value =
         e.target.value.substring(0, e.target.selectionStart) +
@@ -152,26 +152,27 @@ function syncAreas(codeEditor, codePrinterContainer) {
 
       e.target.selectionStart = selStart + tabChars.length;
       e.target.selectionEnd = selStart + tabChars.length;
-
-      e.preventDefault();
     }
   });
 
   codeEditor.addEventListener("keyup", (e) => {
-    if (highlighter) {
-      highlightText(codeEditor, codePrinterContainer);
-    } else {
+    if (NONREACTIVE_KEYS.indexOf(e.keyCode) > -1) {
+      return;
+    }
+
+    if (!highlighter) {
       codePrinterContainer.innerText = codeEditor.value;
     }
 
-    if (config.onChange) {
-      config.onChange(e.target.value);
-    }
+    highlighter && highlightText(codeEditor, codePrinterContainer);
+    config.onChange && config.onChange(e.target.value);
   });
 
-  if (highlighter) {
-    highlightText(codeEditor, codePrinterContainer);
+  if (!highlighter) {
+    codePrinterContainer.innerText = codeEditor.value;
   }
+
+  highlighter && highlightText(codeEditor, codePrinterContainer);
 }
 
 function highlightText(editor, printArea) {

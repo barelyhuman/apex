@@ -1,40 +1,50 @@
 (function () {
-  const fontSizeInput = document.getElementById('font-size-input')
-  const languageInput = document.getElementById('language-input')
+  const fontSizeInput = document.getElementById("font-size-input");
+  const languageInput = document.getElementById("language-input");
+  const hightlightCheckbox = document.getElementById("hightlight-checkbox");
 
-  fontSizeInput.addEventListener('change', () => {
-    refreshEditor()
-  })
+  let highlight = true;
 
-  languageInput.addEventListener('change', () => {
-    refreshEditor()
-  })
+  fontSizeInput.addEventListener("change", () => {
+    refreshEditor();
+  });
 
-  function refreshEditor () {
-    const editor = document.getElementById('editor')
-    editor.innerHTML = ''
+  languageInput.addEventListener("change", () => {
+    refreshEditor();
+  });
 
-    Apex({
-      el: document.getElementById('editor'),
-      font: 'Hack,monospace',
+  hightlightCheckbox.addEventListener("change", (e) => {
+    highlight = e.target.checked;
+    refreshEditor();
+  });
+
+  function refreshEditor() {
+    const editor = document.getElementById("editor");
+    editor.innerHTML = "";
+
+    new Apex({
+      el: document.getElementById("editor"),
+      font: "Hack,monospace",
       fontSize: fontSizeInput.value || 14,
-      placeholder: 'Enter Code here',
+      placeholder: "Enter Code here",
       disabled: false,
       value: `function main(){
-        console.log("apex");
-  }`,
-      className: 'custom-editor',
+    console.log("apex");
+}`,
+      className: "custom-editor",
       onChange: (code) => {
         // console.log(code);
       },
-      highlight: (code) =>
-        Prism.highlight(
-          code,
-          Prism.languages[languageInput.value || 'js'],
-          'javascript'
-        )
-    })
+      highlight: !highlight
+        ? undefined
+        : (code) =>
+            Prism.highlight(
+              code,
+              Prism.languages[languageInput.value || "js"],
+              "javascript"
+            ),
+    });
   }
 
-  refreshEditor()
-})()
+  refreshEditor();
+})();
