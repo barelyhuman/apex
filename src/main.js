@@ -20,8 +20,7 @@ const NONREACTIVE_KEYS = [
   keyCodes.CURSOR_LEFT,
   keyCodes.CURSOR_RIGHT,
   keyCodes.CURSOR_UP,
-  keyCodes.CURSOR_DOWN,
-  keyCodes.SPACE
+  keyCodes.CURSOR_DOWN
 ]
 
 let highlighter = false
