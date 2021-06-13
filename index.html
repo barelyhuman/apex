@@ -2,88 +2,36 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Apex | Example</title>
-    <link rel="stylesheet" href="./css/raster2.css" />
-    <link rel="stylesheet" href="./css/styles.css" />
-
-    <!-- Font -->
+    <title>Apex</title>
+    <link rel="stylesheet" href="./css/index.css" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Source+Code+Pro&display=swap"
+      rel="stylesheet"
+    />
     <link
       rel="stylesheet"
       href="//cdn.jsdelivr.net/npm/hack-font@3/build/web/hack.css"
     />
-
-    <!-- Hightlightjs -->
-      <link rel="stylesheet"
-      href="//unpkg.com/@highlightjs/cdn-assets@11.0.0/styles/mono-blue.min.css">
-
-<script src="//unpkg.com/@highlightjs/cdn-assets@11.0.0/highlight.min.js"></script>
-
-    <style>
-      .custom-editor {
-        background: transparent;
-        border: 0px;
-        border: 2px solid black;
-        border-radius: 4px;
-        outline: none;
-      }
-
-      #editor {
-        padding: 10px;
-      }
-
-      input {
-        background: white;
-        color: black;
-        border: 2px solid rgba(12, 12, 13, 0.1);
-        border-radius: 4px;
-        height: 32px;
-        padding: 0px 6px;
-      }
-
-      input:focus {
-        border-color: black;
-        outline: black;
-      }
-    </style>
   </head>
   <body>
-    <r-grid columns="3">
-      <r-cell span="row">
-        <h3 align="center">
-          Apex
-        </h3>
-        <p align="center">
-          <small>
-            Web Code Editor
-          </small>
-        </p>
-        <p align="center">
-          <a href="https://github.com/barelyhuman/apex#readme">Documentation</a>
-        </p>
-      </r-cell>
-      <r-cell span="row"></r-cell>
-      <r-cell span="row"></r-cell>
-      <r-cell>
-        <label for="">
-          Font Size<br />
-          <input id="font-size-input" type="text" value="16" />
-        </label>
-        <br />
-        <br />
-        <label for="" class="flex align-center">
-          <input type="checkbox" id="hightlight-checkbox" checked="true" />
-          <span>
-            Enable highlighting
-          </span>
-        </label>
-      </r-cell>
-      <r-cell>
-        <div id="editor"></div>
-      </r-cell>
-      <r-cell></r-cell>
-    </r-grid> 
+    <h1 align="center">Apex</h1>
+    <p align="center">Web powered code editor (WIP)</p>
+
+    <div id="code-editor"></div>
+    <span class="apex-ed-cursor-wrapper"></span>
     <script src="./dist/apex.umd.js"></script>
-    <script src="./browser_main.js"></script>
+    <script>
+      const editor = new Apex({
+        el: "#code-editor",
+        fontFamily: "Hack",
+      });
+
+      editor.content = `func main(){fmt.Println("hello"); }`;
+
+      editor.init();
+    </script>
   </body>
 </html>

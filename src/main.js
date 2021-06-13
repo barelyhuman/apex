@@ -1,11 +1,8 @@
-let config = {
-  highlight: (code) => code,
-  font: 'monospace',
-  fontSize: 24,
+const defaultConfig = {
+  el: "",
   tabSpace: 2,
-  disabled: false,
-  editor: null
-}
+  fontFamily: "monospace",
+};
 
 const keyCodes = {
   TAB: 9,
@@ -13,201 +10,201 @@ const keyCodes = {
   CURSOR_RIGHT: 39,
   CURSOR_UP: 38,
   CURSOR_DOWN: 40,
-  SPACE: 32
-}
+  SPACE: 32,
+  ENTER: 13,
+};
 
-const NONREACTIVE_KEYS = [
-  keyCodes.CURSOR_LEFT,
-  keyCodes.CURSOR_RIGHT,
-  keyCodes.CURSOR_UP,
-  keyCodes.CURSOR_DOWN
-]
+const caret = `<span class="apex-ed-cursor-blinking">|</span>`;
 
-let highlighter = false
+function Apex(config = defaultConfig) {
+  var _self = this;
 
-function Apex (_config) {
-  config = Object.assign({}, config, _config)
-  const container = config.el
-  container.classList.add(config.className)
-  container.style = `
-    position: relative;
-    text-align: left;
-    box-sizing: border-box;
-    padding: 0px;
-    overflow: hidden;
-    font-family:${config.font};
-    font-size:${config.fontSize + 'px'};
-    line-height:calc(${config.fontSize}px * 1.5);
-  `
+  _self.config = config;
+  _self.caretPosition = 0;
+  _self.content = "";
+  _self.elm = document.querySelector(config.el);
+  // _self.elm.contentEditable = true;
+  _self.editor = document.createElement("div");
+  _self.elm.appendChild(_self.editor);
 
-  this.config = config
-  this.updateCode = function (code) {
-    this.config.editor.value = code
-    this.config.editor.dispatchEvent(new InputEvent('change'))
+  // Method def start
+
+  _self.setupStyles = () => {
+    _self.elm.style.minHeight = "100px";
+    _self.elm.style.minWidth = "300px";
+    _self.elm.style.border = "1px solid black";
+    _self.elm.style.outline = "#000";
+    _self.elm.style.padding = "16px";
+    _self.elm.style.fontFamily = _self.config.fontFamily || "monospace";
+  };
+
+  _self.startBlinking = () => {
+    const caretEl = document.querySelector(".apex-ed-cursor-blinking");
+    if (!caretEl) {
+      return;
+    }
+    caretEl.classList.add("blink");
+  };
+
+  _self.stopBlinking = () => {
+    const caretEl = document.querySelector(".apex-ed-cursor-blinking");
+    if (!caretEl) {
+      return;
+    }
+    caretEl.classList.remove("blink");
+  };
+
+  _self.getCaretBefore = () => {
+    if (_self.caretPosition === 0) {
+      return "";
+    } else {
+      return _self.content.substring(0, _self.caretPosition);
+    }
+  };
+
+  _self.getCaretAfter = () => {
+    if (_self.caretPosition === _self.content.length) {
+      return "";
+    } else {
+      return _self.content.substring(_self.caretPosition);
+    }
+  };
+
+  _self.normalizeLines = (text) => {
+    return text.replace(/\n/g, "<br/>");
+  };
+
+  _self.compileHTML = () => {
+    return (
+      _self.normalizeLines(_self.getCaretBefore()) +
+      caret +
+      _self.normalizeLines(_self.getCaretAfter())
+    );
+  };
+
+  _self.onType = (char) => {
+    _self.content = _self.getCaretBefore() + char + _self.getCaretAfter();
+    _self.caretPosition = _self.caretPosition + 1;
+  };
+
+  _self.deletePrevChar = () => {
+    if (_self.getCaretBefore().length > 0) {
+      _self.content =
+        _self.getCaretBefore().substring(0, _self.getCaretBefore().length - 1) +
+        _self.getCaretAfter();
+      _self.caretPosition--;
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  _self.deleteNextChar = () => {
+    if (_self.getCaretAfter().length > 0) {
+      _self.content = _self.getCaretBefore() + _self.getCaretAfter().substr(1);
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  _self.moveLeft = () => {
+    if (_self.caretPosition === 0) {
+      return false;
+    } else {
+      _self.caretPosition--;
+      return true;
+    }
+  };
+
+  _self.moveRight = () => {
+    if (_self.caretPosition === _self.content.length) {
+      return false;
+    } else {
+      _self.caretPosition++;
+      return true;
+    }
+  };
+
+  // Method def end
+
+  // Handlers
+
+  _self.elm.addEventListener("click", (e) => {
+    _self.elm.tabIndex = 0;
+    _self.elm.focus();
+  });
+
+  _self.elm.addEventListener("focus", (e) => {
+    _self.startBlinking();
+  });
+
+  _self.elm.addEventListener("blur", (e) => {
+    _self.stopBlinking();
+  });
+
+  _self.elm.addEventListener("keydown", (e) => {
+    if (e.key === 46 && _self.deleteNextChar()) {
+      refreshHTML();
+    }
+    if (e.which === 8 && _self.deletePrevChar()) {
+      refreshHTML();
+    }
+    if (e.which === 37 && _self.moveLeft()) {
+      refreshHTML();
+    }
+    if (e.which === 39 && _self.moveRight()) {
+      refreshHTML();
+    }
+
+    if (e.which === keyCodes.TAB) {
+      e.preventDefault();
+      let char = " ".repeat(_self.config.tabSpace || 2);
+      _self.onType(char);
+      refreshHTML();
+    }
+  });
+
+  _self.elm.addEventListener("keypress", (e) => {
+    let char = String.fromCharCode(e.which);
+    if (e.which === keyCodes.ENTER) {
+      char = "\n";
+    }
+
+    if (e.which === keyCodes.TAB) {
+      char = "\t";
+    }
+
+    _self.onType(char);
+    refreshHTML();
+  });
+
+  function refreshHTML() {
+    _self.elm.innerHTML = _self.compileHTML();
+    const cusorPosition = document
+      .querySelector(".apex-ed-cursor-wrapper")
+      .getBoundingClientRect();
+
+    const heightDelta =
+      document.querySelector(".apex-ed-cursor-wrapper").getBoundingClientRect()
+        .height / 4;
+    const cursor = document.querySelector(".apex-ed-cursor-blinking");
+
+    if (!cursor) {
+      return;
+    }
+
+    cursor.style.top = cusorPosition.top;
+    cursor.style.left = cusorPosition.left - heightDelta;
   }
 
-  addEditor(container)
+  _self.init = () => {
+    _self.setupStyles();
+    refreshHTML();
+    _self.elm.tabIndex = 0;
+    _self.elm.focus();
+    _self.startBlinking();
+  };
 }
 
-function addEditor (toContainer) {
-  const textArea = document.createElement('textarea')
-  const preArea = document.createElement('pre')
-  const codeArea = document.createElement('code')
-
-  // TODO: hide text area;
-  visualiseTextArea(textArea)
-
-  configure(preArea)
-
-  codeArea.style.fontFamily = 'inherit'
-
-  syncAreas(textArea, codeArea)
-  config.editor = textArea
-  preArea.appendChild(codeArea)
-  toContainer.appendChild(textArea)
-  toContainer.appendChild(preArea)
-}
-
-function visualiseTextArea (tarea) {
-  tarea.placeholder = config.placeholder
-  tarea.value = config.value
-  tarea.autoCapitalize = 'off'
-  tarea.autoComplete = 'off'
-  tarea.autoCorrect = 'off'
-  tarea.spellcheck = false
-  tarea.style = `
-      margin: 0px;
-      border: 0px;
-      background: none;
-      box-sizing: inherit;
-      display: inherit;
-      font-family: inherit;
-      font-size: inherit;
-      font-style: inherit;
-      font-variant-ligatures: inherit;
-      font-weight: inherit;
-      letter-spacing: inherit;
-      line-height: inherit;
-      tab-size: inherit;
-      text-indent: inherit;
-      text-rendering: inherit;
-      text-transform: inherit;
-      white-space: pre-wrap;
-      word-break: keep-all;
-      overflow-wrap: break-word;
-      position: absolute;
-      top: 0px;
-      left: 0px;
-      height: 100%;
-      width: 100%;
-      resize: none;
-      color: inherit;
-      overflow: hidden;
-      -webkit-font-smoothing: antialiased;
-      -webkit-text-fill-color: transparent;
-      padding: 10px;
-  `
-
-  tarea.disabled = config.disabled
-}
-
-function configure (codeAreaContainer) {
-  codeAreaContainer.setAttribute('aria-hidden', true)
-  codeAreaContainer.style = `
-    margin: 0px;
-    border: 0px;
-    background: none;
-    box-sizing: inherit;
-    display: inherit;
-    font-family: inherit;
-    font-size: inherit;
-    font-style: inherit;
-    font-variant-ligatures: inherit;
-    font-weight: inherit;
-    letter-spacing: inherit;
-    line-height: inherit;
-    tab-size: inherit;
-    text-indent: inherit;
-    text-rendering: inherit;
-    text-transform: inherit;
-    white-space: pre-wrap;
-    word-break: keep-all;
-    overflow-wrap: break-word;
-    position: relative;
-    pointer-events: none;
-    padding: 10px;
-    overflow-x: auto;
-  `
-}
-
-function syncAreas (codeEditor, codePrinterContainer) {
-  if (config.highlight && typeof config.highlight === 'function') {
-    highlighter = true
-    codeEditor.style.webkitTextFillColor = 'transparent'
-  } else {
-    highlighter = false
-  }
-
-  codeEditor.addEventListener('change', (e) => {
-    if (!highlighter) {
-      codePrinterContainer.innerText = codeEditor.value
-    }
-
-    highlighter && highlightText(codeEditor, codePrinterContainer)
-  })
-
-  codeEditor.addEventListener('keydown', (e) => {
-    const selStart = e.target.selectionStart
-
-    if (e.keyCode === keyCodes.TAB) {
-      e.preventDefault()
-
-      const tabChars = ' '.repeat(config.tabSpace)
-      e.target.value =
-        e.target.value.substring(0, e.target.selectionStart) +
-        tabChars +
-        e.target.value.substring(e.target.selectionEnd)
-
-      e.target.selectionStart = selStart + tabChars.length
-      e.target.selectionEnd = selStart + tabChars.length
-    }
-  })
-
-  codeEditor.addEventListener('keyup', (e) => {
-    if (NONREACTIVE_KEYS.indexOf(e.keyCode) > -1) {
-      return
-    }
-
-    if (!highlighter) {
-      codePrinterContainer.innerText = codeEditor.value
-    }
-
-    highlighter && highlightText(codeEditor, codePrinterContainer)
-    config.onChange && config.onChange(e.target.value)
-  })
-
-  if (!highlighter) {
-    codePrinterContainer.innerText = codeEditor.value
-  }
-
-  highlighter && highlightText(codeEditor, codePrinterContainer)
-}
-
-function highlightText (editor, printArea) {
-  const _value = editor.value
-  editor.innerHTML = _value
-
-  useHighlighter(_value)
-    .then((data) => {
-      printArea.innerHTML = data
-    })
-    .catch((err) => {
-      console.log(err)
-    })
-}
-
-async function useHighlighter (value) {
-  return config.highlight(value)
-}
-
-export default Apex
+export default Apex;

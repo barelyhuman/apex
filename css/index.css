@@ -1,0 +1,77 @@
+body {
+  max-width: 36em;
+  padding: 16px;
+  margin: 0 auto;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.apex-ed-cursor-wrapper {
+  visibility: hidden;
+  display: inline-block;
+  width: 0;
+}
+
+.apex-ed-cursor-blinking {
+  font-weight: 600;
+  z-index: 1;
+  position: absolute;
+  color: #3e3e3e;
+}
+
+.apex-ed-cursor-blinking.blink {
+  -webkit-animation: 0.5s blink step-end infinite;
+  -moz-animation: 0.5s blink step-end infinite;
+  -ms-animation: 0.5s blink step-end infinite;
+  -o-animation: 0.5s blink step-end infinite;
+  animation: 0.5s blink step-end infinite;
+}
+
+@keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #3e3e3e;
+  }
+}
+
+@-moz-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #3e3e3e;
+  }
+}
+
+@-webkit-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #3e3e3e;
+  }
+}
+
+@-ms-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #3e3e3e;
+  }
+}
+
+@-o-keyframes blink {
+  from,
+  to {
+    color: transparent;
+  }
+  50% {
+    color: #3e3e3e;
+  }
+}
